@@ -9,6 +9,8 @@ import {
   createNewSpecialty,
   getAllSpecialty,
   deleteSpecialtyById,
+  getSpecialtyById,
+  updateSpecial
 } from "../../../services/userService";
 import { toast } from "react-toastify";
 import Table from "react-bootstrap/Table";
@@ -28,8 +30,8 @@ class ManageSpecialty extends Component {
       descriptionMarkdown: "",
       ListSpecialty: [],
       show: false,
+      refEditForm: "",
     };
-    this;
   }
 
   async componentDidMount() {
@@ -69,21 +71,37 @@ class ManageSpecialty extends Component {
   };
 
   handleSaveSpecialty = async () => {
-    let res = await createNewSpecialty(this.state);
-    if (res && res.errCode === 0) {
-      toast.success("Add new specialty succeeds!");
-      this.setState({
-        name: "",
-        imageBase64: "",
-        descriptionHTML: "",
-        descriptionMarkdown: "",
-      });
-    } else {
-      toast.error("Something wrongs....");
-      console.log("check res: ", res);
+    if ( typeof(this.state.id) != 'number') {
+      let res = await createNewSpecialty(this.state);
+      if (res && res.errCode === 0) {
+        toast.success("Add new specialty succeeds!");
+        this.setState({
+          name: "",
+          imageBase64: "",
+          descriptionHTML: "",
+          descriptionMarkdown: "",
+        });
+      } else {
+        toast.error("Something wrongs....");
+        console.log("check res: ", res);
+      }
+      this.handleClose();
+      this.componentDidMount();
     }
-    this.handleClose();
-    this.componentDidMount();
+    else{
+      let data = {
+        id: this.state.id,
+        name: this.state.name,
+        descriptionHTML: this.state.descriptionHTML,
+        descriptionMarkdown: this.state.descriptionMarkdown,
+        imageBase64: this.state.imageBase64
+      }
+      let res = await updateSpecial(data)
+      this.setState({
+        show: false
+      })
+      this.componentDidMount()
+    }
   };
 
   handleDeleteBtn = async (id) => {
@@ -100,9 +118,21 @@ class ManageSpecialty extends Component {
   };
 
   AddSpecialty = () => {
+    this.setState({
+      refEditForm: "Thêm mới chuyên khoa",
+    });
     this.handleShow();
   };
-  UpdateSpecialty = () => {
+  UpdateSpecialty = async (id) => {
+    let data = await getSpecialtyById(id)
+    this.setState({
+      refEditForm: "Chỉnh sửa chuyên khoa",
+      id: data.id,
+      imageBase64: data.imageBase64,
+      descriptionHTML: data.descriptionHTML,
+      descriptionMarkdown: data.descriptionMarkdown,
+      name: data.name
+    });
     this.handleShow();
   };
 
@@ -135,7 +165,7 @@ class ManageSpecialty extends Component {
                 <td>{item.id}</td>
                 <td>{item.name}</td>
                 <td>
-                  <img src={item.image} alt="Image" className="_img"/>
+                  <img src={item.image} alt="Image" className="_img" />
                 </td>
                 <td>
                   <div className="row-height">
@@ -149,7 +179,7 @@ class ManageSpecialty extends Component {
                     type="button"
                     className="btn btn-warning m-2"
                     onClick={(e) => {
-                      this.UpdateSpecialty();
+                      this.UpdateSpecialty(item.id);
                     }}
                   >
                     Sửa
@@ -174,7 +204,7 @@ class ManageSpecialty extends Component {
           }}
         >
           <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
+            <Modal.Title>{this.state.refEditForm}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <div className="add-new-specialty row">

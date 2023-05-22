@@ -109,6 +109,12 @@ const deleteBookingById = (id) =>{
 const deleteSpecialtyById = (id) =>{
     return axios.get(`/api/delete-specialty-by-id?id=${id}`);
 }
+const getSpecialtyById = (id) =>{
+    return axios.get(`/api/get-specialty-by-id?id=${id}`);
+}
+const updateSpecial = (data)=>{
+    return axios.post("/api/update-specialty", data);
+}
 
 export {
     handleLoginApi,
@@ -137,5 +143,7 @@ export {
     postSendRemedy,
     callAllBookedByDoctorIdAndDate,
     deleteBookingById,
-    deleteSpecialtyById
+    deleteSpecialtyById,
+    getSpecialtyById,
+    updateSpecial
 }
