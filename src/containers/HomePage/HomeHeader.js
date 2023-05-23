@@ -16,6 +16,7 @@ class HomeHeader extends Component {
       dataSearch: [],
       test: [],
       focusSearch: false,
+      hoverSearch: false,
     };
     this.refSearch = React.createRef();
   }
@@ -43,27 +44,39 @@ class HomeHeader extends Component {
   }
 
   handleFocus = (e) => {
-    let currentFocusSearch = this.state.focusSearch
+    let currentFocusSearch = this.state.focusSearch;
     this.setState({
-        focusSearch: !currentFocusSearch,
+      focusSearch: !currentFocusSearch,
     });
-    
-      this.refSearch.current.style.display = "block";
+
+    this.refSearch.current.style.display = "block";
   };
 
-  handleBlur = (e)=> {
-    let currentFocusSearch = this.state.focusSearch
+  handleBlur = (e) => {
+    let currentFocusSearch = this.state.focusSearch;
     this.setState({
-        focusSearch: !currentFocusSearch,
+      focusSearch: !currentFocusSearch,
     });
-    
+    if (!this.state.hoverSearch) {
       this.refSearch.current.style.display = "none";
+    }
+  };
+
+  handleMouseEnterSearch = (e)=> {
+    this.setState({
+      hoverSearch: true,
+    });
+  }
+
+  handleMouseLeverSearch = (e)=> {
+    this.setState({
+      hoverSearch: false,
+    });
   }
 
   render() {
+    console.log("mouse hover ", this.state.hoverSearch)
     let language = this.props.language;
-    console.log("check userInfo: ", this.props.userInfo);
-    console.log("data search: ", this.state.dataSearch);
     return (
       <React.Fragment>
         <div className="home-header-container">
@@ -166,12 +179,23 @@ class HomeHeader extends Component {
                   onFocus={(e) => {
                     this.handleFocus(e);
                   }}
-                  onBlur={(e)=> {this.handleBlur(e)}}
+                  onBlur={(e) => {
+                    this.handleBlur(e);
+                  }}
                   onChange={(e) => {
                     this.handleSearch(e.target.value);
                   }}
                 />
-                <div className="dataRenderSearch" ref={this.refSearch}>
+                <div
+                  className="dataRenderSearch"
+                  ref={this.refSearch}
+                  onMouseEnter={(e) => {
+                    this.handleMouseEnterSearch(e);
+                  }}
+                  onMouseLeave={(e) => {
+                    this.handleMouseLeverSearch(e);
+                  }}
+                >
                   {this.state.dataSearch
                     .filter((item) => {
                       return item.name
@@ -182,13 +206,14 @@ class HomeHeader extends Component {
                         );
                     })
                     .map((item) => (
-                      <div
+                      <a
+                        href={`/detail-specialty/${item.id}`}
                         key={item.id}
                         className="dataRenderSearch_child_container"
                       >
                         <img src={item.image} />
                         <div>{item.name}</div>
-                      </div>
+                      </a>
                     ))}
                 </div>
               </div>
