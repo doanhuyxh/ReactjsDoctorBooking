@@ -95,7 +95,8 @@
             "btnConfirm": "Confirm",
             "btnCancel": "Cancel",
             "priceBooking": "Free booking",
-            "price": "Price: "
+            "price": "Price: ",
+            "insuranceCardCode": "Insurance Card Code"
         }
     },
     "admin": {
